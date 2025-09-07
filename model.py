@@ -21,9 +21,9 @@ class Actor(Base):
 class User(Base):
     __tablename__ = "user"
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    username: Mapped[int] = mapped_column(String(45), unique=True)
-    hashed_password: Mapped[int] = mapped_column(Text)
+    id: Mapped[int] = mapped_column(primary_key=True, index=True)
+    username: Mapped[str] = mapped_column(String(45), unique=True, index=True)
+    hashed_password: Mapped[str] = mapped_column(Text)
     is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
 

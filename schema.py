@@ -28,7 +28,6 @@ class UserSchema(BaseModel):
         from_attribrutes = True
 
 
-class UserCreate(BaseModel):
-    id: int
+class UserCreation(BaseModel):
     username: str
     password: str

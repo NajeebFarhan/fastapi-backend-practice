@@ -3,9 +3,10 @@ from sqlalchemy.orm import Session
 from fastapi import APIRouter, HTTPException, Depends
 
 from schema import ActorSchema, ActorCreate
-from model import Actor
+from model import Actor, User
 from db_setup import get_db
 from datetime import datetime, timezone
+from util.get_current_user import get_current_user
 
 router = APIRouter(
     prefix="/actors",
@@ -13,7 +14,7 @@ router = APIRouter(
 )
 
 @router.get("/", response_model=list[ActorSchema])
-async def get_actors(limit: int = 10, offset: int = 0, db: Session = Depends(get_db)):
+async def get_actors(limit: int = 10, offset: int = 0, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
 
     actors = db.query(Actor).limit(limit).offset(offset).all()
 
@@ -21,8 +22,11 @@ async def get_actors(limit: int = 10, offset: int = 0, db: Session = Depends(get
 
 
 @router.post("/", response_model=ActorSchema)
-async def post_actor(actor: ActorCreate, db: Session = Depends(get_db)):
+async def post_actor(actor: ActorCreate, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     
+    if not current_user.is_admin:
+        raise HTTPException(status_code=401, detail="Unathorized action")
+
     new_actor = Actor(
         first_name = actor.first_name,
         last_name = actor.last_name,
@@ -37,14 +41,14 @@ async def post_actor(actor: ActorCreate, db: Session = Depends(get_db)):
 
 
 @router.get("/count")
-async def get_count(db: Session = Depends(get_db)):
+async def get_count(db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
     result = db.execute(text("SELECT COUNT(*) FROM actor")).scalar()
 
     return { "count": result }
 
 
 @router.get("/{actor_id}", response_model=ActorSchema)
-async def get_actor(actor_id: int, db: Session = Depends(get_db)):
+async def get_actor(actor_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
 
     actor = db.query(Actor).filter(Actor.actor_id == actor_id).first()
     
@@ -56,7 +60,10 @@ async def get_actor(actor_id: int, db: Session = Depends(get_db)):
 
 
 @router.delete("/{actor_id}")
-async def delete_actor(actor_id: int, db: Session = Depends(get_db)):
+async def delete_actor(actor_id: int, db: Session = Depends(get_db), current_user: User = Depends(get_current_user)):
+
+    if not current_user.is_admin:
+        raise HTTPException(status_code=401, detail="Unathorized action")
 
     actor = db.query(Actor).filter(Actor.actor_id == actor_id).first()
 
@@ -67,6 +74,4 @@ async def delete_actor(actor_id: int, db: Session = Depends(get_db)):
         db.delete(actor)
         db.commit()
 
-        return {
-            "message": f"Actor {actor_id} successfully deleted"
-        }
+        return { "message": f"Actor {actor_id} successfully deleted" }
