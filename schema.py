@@ -2,32 +2,31 @@ from pydantic import BaseModel
 from datetime import datetime
 
 
-class ActorCreate(BaseModel):
+class AccountCreate(BaseModel):
     first_name: str
     last_name: str
-    # last_update: datetime
+    username: str
+    password: str
 
 
-class ActorSchema(BaseModel):
+class AccountSchema(BaseModel):
     actor_id: int
     first_name: str
     last_name: str
-    last_update: datetime
-
+    username: str
+    
     class Config:
         from_attributes = True
-
-
-class UserSchema(BaseModel):
-    id: int
+        
+        
+class CurrentAccountSchema(BaseModel):
+    actor_id: int
+    first_name: str
+    last_name: str
     username: str
+    last_update: datetime
     hashed_password: str
     is_admin: bool
-
+    
     class Config:
-        from_attribrutes = True
-
-
-class UserCreation(BaseModel):
-    username: str
-    password: str
+        from_attributes = True

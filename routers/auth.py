@@ -5,32 +5,32 @@ from typing import Annotated
 from db_setup import get_db
 from util.password_auth import hash_password, verify_password
 from util.token import create_token
-from model import User
+from model import Account
 
 
 router = APIRouter(tags=["auth"])
 
 @router.post("/signup")
-def signup(username: Annotated[str, Form()], password: Annotated[str, Form()], db: Session = Depends(get_db)):
+def signup(first_name: Annotated[str, Form()], last_name: Annotated[str, Form()], username: Annotated[str, Form()], password: Annotated[str, Form()], db: Session = Depends(get_db)):
 
-    if db.query(User).filter(User.username == username).first():
+    if db.query(Account).filter(Account.username == username).first():
         raise HTTPException(status_code=400, detail="User already exists")
 
-    user = User(username=username, hashed_password=hash_password(password))
-    db.add(user)
+    account = Account(first_name=first_name, last_name=last_name, username=username, hashed_password=hash_password(password))
+    db.add(account)
     db.commit()
-    db.refresh(user)
-    return {"msg": "User created"}
+    db.refresh(account)
+    return {"msg": "Account created"}
 
 
 @router.post("/login")
 def login(username: Annotated[str, Form()], password: Annotated[str, Form()], db: Session = Depends(get_db)):
 
-    user = db.query(User).filter(User.username == username).first()
+    account = db.query(Account).filter(Account.username == username).first()
 
-    if not user or not verify_password(password, user.hashed_password):
+    if not account or not verify_password(password, account.hashed_password):
         raise HTTPException(status_code=401, detail="Invalid credentials")
 
-    token = create_token(user.username)
+    token = create_token(account.username)
     
     return {"access_token": token, "token_type": "bearer"}

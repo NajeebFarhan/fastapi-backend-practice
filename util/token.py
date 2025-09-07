@@ -7,8 +7,6 @@ SECRET_KEY: str = environ.get("SECRET_KEY") or ""
 ALGORITHM: str = environ.get("ALGORITHM") or ""
 EXPIRY: int = int(environ.get("EXPIRY") or 15)
 
-print(SECRET_KEY, ALGORITHM)
-
 def create_token(sub: str, expiry: int | None = None):
     
     if not expiry:
