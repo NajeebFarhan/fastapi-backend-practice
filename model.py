@@ -1,4 +1,4 @@
-from sqlalchemy import String, TIMESTAMP, Text
+from sqlalchemy import String, TIMESTAMP, Text, Boolean
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column
 
 from db_setup import engine
@@ -16,16 +16,15 @@ class Actor(Base):
     last_name: Mapped[str] = mapped_column(String(45))
     last_update: Mapped[datetime] = mapped_column(TIMESTAMP)
 
-    def __repr__(self) -> str:
-        return f"full name - {self.first_name} {self.last_name}\n"
     
 
-class Film(Base):
-    __tablename__ = "film"
+class User(Base):
+    __tablename__ = "user"
 
-    film_id: Mapped[int] = mapped_column(primary_key=True)
-    title: Mapped[int] = mapped_column(String(128))
-    description: Mapped[int] = mapped_column(Text)
+    id: Mapped[int] = mapped_column(primary_key=True)
+    username: Mapped[int] = mapped_column(String(45), unique=True)
+    hashed_password: Mapped[int] = mapped_column(Text)
+    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
 
 
 Base.metadata.create_all(engine)

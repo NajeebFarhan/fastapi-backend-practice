@@ -16,3 +16,19 @@ class ActorSchema(BaseModel):
 
     class Config:
         from_attributes = True
+
+
+class UserSchema(BaseModel):
+    id: int
+    username: str
+    hashed_password: str
+    is_admin: bool
+
+    class Config:
+        from_attribrutes = True
+
+
+class UserCreate(BaseModel):
+    id: int
+    username: str
+    password: str
