@@ -8,23 +8,15 @@ class Base(DeclarativeBase):
     pass
 
 
-class Actor(Base):
+class Account(Base):
     __tablename__ = "actor"
 
     actor_id: Mapped[int] = mapped_column(primary_key=True)
     first_name: Mapped[str] = mapped_column(String(45))
     last_name: Mapped[str] = mapped_column(String(45))
+    username: Mapped[str] = mapped_column(String(45))
     last_update: Mapped[datetime] = mapped_column(TIMESTAMP)
-
-    
-
-class User(Base):
-    __tablename__ = "user"
-
-    id: Mapped[int] = mapped_column(primary_key=True, index=True)
-    username: Mapped[str] = mapped_column(String(45), unique=True, index=True)
     hashed_password: Mapped[str] = mapped_column(Text)
-    is_admin: Mapped[bool] = mapped_column(Boolean, default=False)
-
-
+    is_admin: Mapped[bool] = mapped_column(Boolean)
+    
 Base.metadata.create_all(engine)

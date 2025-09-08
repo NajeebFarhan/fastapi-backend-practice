@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy.orm import sessionmaker
 from os import environ
 from dotenv import load_dotenv
@@ -10,7 +10,7 @@ HOST = environ.get("HOST") or ""
 PWD = environ.get("DB_PWD") or ""
 PORT = environ.get("PORT") or 3306
 
-print(USR, HOST, PWD, PORT)
+# print(USR, HOST, PWD, PORT)
 
 engine = create_engine(f"mysql+pymysql://{USR}:{PWD}@{HOST}:{PORT}/sakila", echo=True)
 
@@ -24,7 +24,6 @@ def get_db():
     finally:
         db.close()
 
+    
 
-# this is for some manual db changing
-if __name__ == "__main__":
-    pass
+        
